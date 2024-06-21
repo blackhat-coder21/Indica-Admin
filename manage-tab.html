@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carousel Management</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Admin Panel</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Manage Carousel Items</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="admin.html" target="_self">Manage Videos</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="#manage-articles-tab">Manage Articles (Tab)</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#gallery">Gallery</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h2>Manage Articles (Tab)</h2>
+        <form id="articleFormTab" class="mb-4">
+            <div class="form-group">
+                <label for="tab">Tab</label>
+                <select id="tab" class="form-control" required>
+                    <option value="education">Education</option>
+                    <option value="finance">Finance</option>
+                    <option value="politics">Politics</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="titleTab">Title</label>
+                <input type="text" class="form-control" id="titleTab" required>
+            </div>
+            <div class="form-group">
+                <label for="contentTab">Content</label>
+                <textarea class="form-control" id="contentTab" rows="3" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="imageTab">Image</label>
+                <input type="file" class="form-control" id="imageTab" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Article</button>
+        </form>
+        <h3>Article List (Tab)</h3>
+        <div class="articlesTab">
+            <!-- Articles will be listed here -->
+        </div>
+    </div>
+
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+        import { getFirestore, collection, getDocs, addDoc, deleteDoc, updateDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBOeB4Rt9-CQ7BJ24u0kLvh9BiXIauUGHI",
+            authDomain: "indica-news.firebaseapp.com",
+            projectId: "indica-news",
+            storageBucket: "indica-news.appspot.com",
+            messagingSenderId: "609269741653",
+            appId: "1:609269741653:web:c8378fa0df193573f57cdc",
+            measurementId: "G-P7B75FY4EX"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+
+        // Function to fetch articles for a specific tab
+        async function fetchArticlesTab() {
+            const articlesContainer = document.querySelector('.articlesTab');
+            articlesContainer.innerHTML = '';
+            try {
+                const querySnapshot = await getDocs(collection(db, 'articles'));
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const articleID = doc.id;
+                    const articleDiv = document.createElement('div');
+                    articleDiv.className = 'article-container';
+                    articleDiv.innerHTML = `
+                <h4>${data.title}</h4>
+                <p>${data.content}</p>
+                <img src="${data.imageUrl}" class="img-fluid" alt="${data.title}">
+                <button class="btn btn-danger btn-sm mt-2" onclick="deleteArticle('${articleID}', '${data.imageUrl}')">Delete</button>
+            `;
+                    articlesContainer.appendChild(articleDiv);
+                });
+            } catch (error) {
+                console.error('Error fetching articles:', error);
+            }
+        }
+
+        // Function to add a new article to the tab
+        async function addArticle(event) {
+            event.preventDefault();
+            const tab = document.getElementById('tab').value;
+            const title = document.getElementById('titleTab').value;
+            const content = document.getElementById('contentTab').value;
+            const imageFile = document.getElementById('imageTab').files[0];
+
+            if (!imageFile) {
+                alert('Please select an image file.');
+                return;
+            }
+
+            try {
+                const imageRef = ref(storage, `images/${imageFile.name}`);
+                const snapshot = await uploadBytes(imageRef, imageFile);
+                const imageUrl = await getDownloadURL(snapshot.ref);
+
+                await addDoc(collection(db, 'articles'), {
+                    tab: tab,
+                    title: title,
+                    content: content,
+                    imageUrl: imageUrl
+                });
+
+                document.getElementById('articleFormTab').reset();
+                fetchArticlesTab();
+            } catch (error) {
+                console.error('Error adding article:', error);
+            }
+        }
+
+        // Function to delete an article from the tab
+        async function deleteArticle(articleID, imageUrl) {
+            try {
+                await deleteDoc(doc(db, 'articles', articleID));
+                const imageRef = ref(storage, imageUrl);
+                await deleteObject(imageRef);
+
+                console.log(`Article with ID ${articleID} and its image deleted successfully`);
+                fetchArticlesTab();
+            } catch (error) {
+                console.error('Error deleting article:', error);
+            }
+        }
+
+        // Make deleteArticle function globally accessible
+        window.deleteArticle = deleteArticle;
+
+        // Fetch articles for the tab when the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', fetchArticlesTab);
+
+        // Attach event listener to the article form tab
+        document.getElementById('articleFormTab').addEventListener('submit', addArticle);
+    </script>
+
+    <!-- jQuery and Bootstrap JS (make sure to include jQuery before Bootstrap's JS) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
