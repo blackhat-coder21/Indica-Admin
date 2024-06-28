@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carousel Management</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="../index.html">Admin Panel</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="#">Manage Carousel Items</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="../index.html" target="_self">Manage Videos</a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link" href="#manage-articles-tab">Manage Articles (Tab)</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#gallery">Gallery</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h1 class="my-4">Admin Page</h1>
+    <form id="articleForm" class="mb-4">
+      <input type="hidden" id="docId" />
+      <div class="form-group">
+        <label for="title">Title:</label>
+        <input type="text" id="title" class="form-control" required />
+      </div>
+      <div class="form-group">
+        <label for="description">Description:</label>
+        <textarea id="description" class="form-control" required></textarea>
+      </div>
+      <div class="form-group">
+        <label for="image">Image:</label>
+        <input type="file" id="image" class="form-control-file" accept="image/*" required />
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+    <div id="articles" class="row"></div>
+  </div>
+
+  <script src="../js/latest-article.js" type="module"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

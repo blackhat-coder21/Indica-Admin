@@ -17,7 +17,7 @@
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="#">Admin Panel</a>
+        <a class="navbar-brand" href="index.html">Admin Panel</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -35,6 +35,12 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="html/gallery.html" target="_self">Gallery</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="html/latest.html" target="_self">Latest</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="html/latest-article.html" target="_self">Latest Articles</a>
                 </li>
             </ul>
         </div>
@@ -83,39 +89,6 @@
             <!-- Articles will be listed here -->
         </div>
     </div>
-
-    <div class="container mt-5">
-        <h2>Manage Articles (Tab)</h2>
-        <form id="articleFormTab" class="mb-4">
-            <div class="form-group">
-                <label for="tab">Tab</label>
-                <select id="tab" class="form-control" required>
-                    <option value="education">Education</option>
-                    <option value="finance">Finance</option>
-                    <option value="politics">Politics</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="titleTab">Title</label>
-                <input type="text" class="form-control" id="titleTab" required>
-            </div>
-            <div class="form-group">
-                <label for="contentTab">Content</label>
-                <textarea class="form-control" id="contentTab" rows="3" required></textarea>
-            </div>
-            <div class="form-group">
-                <label for="imageTab">Image</label>
-                <input type="file" class="form-control" id="imageTab" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Add Article</button>
-        </form>
-        <h3>Article List (Tab)</h3>
-        <div class="articlesTab">
-            <!-- Articles will be listed here -->
-        </div>
-    </div>
-
-
 
 
     <!-- Firebase App (the core Firebase SDK) -->
